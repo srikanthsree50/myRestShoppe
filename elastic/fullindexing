@@ -1,0 +1,176 @@
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+GET products/_mapping/Boutique
+
+GET products/
+
+DELETE products
+
+GET products/Boutique/_search/
+{
+  "query": {
+    "match": {
+      "name": "dill"
+    }
+  }
+}
+
+
+GET products/_search
+{
+  "query": {
+    "match": {
+      "name": "dill pad"
+    }
+  },
+    "_source": "name",
+    "suggest": {
+        "doc-suggest" : {
+            "prefix" : "inspi",
+            "completion" : {
+                "field" : "suggest",
+                "fuzzy" : {
+                    "fuzziness" : 2
+                }
+            }
+        }
+    }      
+          
+}
+
+PUT products/
+{   
+
+  
+   "mappings": {
+      "Boutique": {
+        "properties": {
+          "category": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "extra_fields": {
+            "properties": {
+              "colors": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "company": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "discount": {
+                "type": "long"
+              },
+              "sizes": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "imageid": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "location": {
+            "properties": {
+              "lat": {
+                "type": "float"
+              },
+              "lon": {
+                "type": "float"
+              }
+            }
+          },
+          "mrp": {
+            "type": "long"
+          },
+          "name": {"type": "text",
+                  "analyzer": "name_analyzer",
+                    "search_analyzer": "name_analyzer"
+                },
+          "seller_pk": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "seller_uid": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "suggest": {
+                    "type": "completion",
+                    "analyzer": "standard",
+                    "search_analyzer": "standard"
+                        }  
+        }
+      }
+    },           
+  "settings": {
+    "analysis": {
+        "filter": {
+            "custom_ngram": {
+                "type": "nGram",
+                "min_gram": 2,
+                "max_gram": 4
+            },
+            "custom_edge_ngram":{
+                "type": "edgeNGram",
+                "min_gram": 2,
+                "max_gram": 4
+            }
+        },
+        "analyzer": {
+            "name_analyzer": {
+                "type": "custom",
+                "tokenizer": "standard",
+                "filter": ["custom_ngram","lowercase"]
+            },
+            "name_edge_analyzer": {
+                "type": "custom",
+                "tokenizer": "standard",
+                "filter": ["custom_edge_ngram","lowercase"]
+            }           
+        }
+    }
+}
+}

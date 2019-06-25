@@ -1,0 +1,183 @@
+GET products/_search?from=30
+{
+  "query": {
+    "match_all": {}
+  }
+}
+//spelling suggest
+POST products/_search
+{
+  "query": {
+    "match": {
+      "name": "cycle"
+    }
+  },
+  "suggest": {
+    "my-suggestion": {
+      "text": "cyle",
+      "term": {
+        "field": "name"
+      }
+    }
+  }
+}
+
+GET products/Boutique/_search/
+{
+  "query": {
+    "match": {
+      "name": "tre rkb"
+    }
+  }
+}
+
+GET products/_analyze
+{
+  "analyzer": "name_edge_analyzer",
+  "text": ["tree mango apple"]
+}
+
+
+GET products/_analyze
+{
+  "tokenizer": "standard",
+  "text": ["my name is 45 bhuoendra"]
+}
+
+
+GET products/_analyze
+{
+  "tokenizer": "ngram",
+  "text": ["my name is bhuoendra"]
+}
+
+GET products/_search?size=10&from=10
+
+GET products/_mapping
+
+GET products/_settings
+
+POST products/_close
+
+DELETE products/
+
+//autocomletion//
+POST products/_search?pretty
+{ 
+    "_source": "name",
+    "suggest": {
+        "doc-suggest" : {
+            "prefix" : "mngo",
+            "completion" : {
+                "field" : "suggest",
+                "fuzzy" : {
+                    "fuzziness" : 2
+                }
+            }
+        }
+    }
+}
+
+GET products/_search
+{
+  "query": {
+    "fuzzy" : {
+            "name" : {
+                    "value" :   "botl",
+                    "fuzziness" :     2,
+                    "prefix_length" : 2,
+                    "max_expansions": 50
+                    }
+              }
+          }
+}          
+
+GET products/_search
+{
+  "query": {
+    "match": {
+      "name": "tre sheet rkb"
+    }
+  },
+    "_source": "name",
+    "suggest": {
+        "doc-suggest" : {
+            "prefix" : "mngo",
+            "completion" : {
+                "field" : "suggest",
+                "fuzzy" : {
+                    "fuzziness" : 2
+                }
+            }
+        }
+    }      
+          
+}
+
+
+
+GET /_search/
+{
+    "query": {
+        "match" : {
+            "name" : {
+                "query" : "mango"
+            }
+        }
+    }
+}
+GET products/Boutique/_search
+
+GET products/
+
+DELETE products/
+
+PUT products/
+{   
+
+  "settings": {
+    "analysis": {
+        "filter": {
+            "custom_ngram": {
+                "type": "nGram",
+                "min_gram": 2,
+                "max_gram": 4
+            },
+            "custom_edge_ngram":{
+                "type": "edgeNGram",
+                "min_gram": 2,
+                "max_gram": 4    
+            }
+        },
+        "analyzer": {
+            "name_analyzer": {
+                "type": "custom",
+                "tokenizer": "standard",
+                "filter": ["custom_ngram","lowercase"]
+            },
+            "name_edge_analyzer": {
+                "type": "custom",
+                "tokenizer": "standard",
+                "filter": ["custom_edge_ngram","lowercase"]
+            }           
+        }
+    }
+  },
+  "mappings": {
+    "Boutique": {
+    "properties": {
+                "name": {"type": "text",
+                  "analyzer": "name_analyzer",
+                    "search_analyzer": "name_analyzer"
+                },
+                "imageid":{"type": "text"},
+                "seller_uid":{"type": "text"},
+                "suggest": {
+                    "type": "completion",
+                    "analyzer": "standard",
+                    "search_analyzer": "standard"
+                        }        
+            }
+    }
+  }  
+}
